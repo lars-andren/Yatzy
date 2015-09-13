@@ -112,7 +112,7 @@ public class PlayerPanelConstructor implements PanelConstructor {
 		JButton doneButton = new JButton(TextLabels.DONE);
 		doneButton.addActionListener(new ActionListener() {
 	         public void actionPerformed(ActionEvent e) {
-	            PlayerPanelConstructor.this.main.playerDone(PlayerPanelConstructor.this.playerID);
+	            PlayerPanelConstructor.this.main.playerIsDone(PlayerPanelConstructor.this.playerID);
 	            doneButton.setEnabled(false);
 	            PlayerPanelConstructor.this.main.checkEndGame();
 	         }          
@@ -149,7 +149,7 @@ public class PlayerPanelConstructor implements PanelConstructor {
 		JButton combButton = new JButton(TextLabels.USE_COMBINATION);
 		combButton.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				PlayerPanelConstructor.this.main.showCombinations(PlayerPanelConstructor.this.playerID);
+				PlayerPanelConstructor.this.main.showAvailableCombinations(PlayerPanelConstructor.this.playerID);
 			}
 		});
 		combButton.setEnabled(true);

@@ -41,8 +41,8 @@ public class TestController {
 	public void testGeneral() {
 		
 		assertTrue(c.getNrOfRounds() > 0);
-		assertNotNull(c.getCombinations(1));
-		assertTrue(c.getCombinations(1).size() == 7);
+		assertNotNull(c.getAvailableCombinations(1));
+		assertTrue(c.getAvailableCombinations(1).size() == 7);
 	}
 	
 	/**

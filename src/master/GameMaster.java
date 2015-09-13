@@ -11,41 +11,28 @@ import java.util.HashMap;
  */
 public class GameMaster {
 
-	/**
-	 * To keep track of players.
-	 */
 	private ArrayList<Player> players = new ArrayList<Player>();
 	private HashMap<Integer, Player> playerMap = new HashMap<Integer, Player>();
 	
-	/* Default is D6, but maybe in the future..*/
 	private DiceType diceType;
 	
 	/* TODO get from user/resource */
 	private final int TOTAL_DICE = 5;
 	private final int TOTAL_ROUNDS = 3;
 	
-	/**
-	 * Sets the type of dice to use.
-	 * 
-	 * @param rounds
-	 */
 	public GameMaster(DiceType type) {
 		
-		this.diceType = type;
+		diceType = type;
 	}
 	
 	public Player getPlayerForID(int playerID) {
-		return this.playerMap.get(playerID);
+		return playerMap.get(playerID);
 	}
 	
 	public DiceType getDiceType() {
-		return this.diceType;
+		return diceType;
 	}
 	
-	/**
-	 * 
-	 * @param players checked by Controller to be OK.
-	 */
 	public void setPlayers(int players) {
 		
 		/* First id is 1. */
@@ -54,27 +41,14 @@ public class GameMaster {
 		}
 	}
 	
-	/**
-	 * 
-	 * @return the <code>Player</code> in ID ascending order.
-	 */
 	public ArrayList<Player> getPlayers() {
-		return this.players;
+		return players;
 	}
 	
-	/**
-	 * 
-	 * @return rounds of the game.
-	 */
 	public int getNrOfRounds() {
 		return TOTAL_ROUNDS;
 	}
 	
-	/**
-	 * Creates a new player and adds hen to the set of players.
-	 * 
-	 * @param id	unique identifer.
-	 */
 	private Player createPlayer(int id) {
 		
 		Player newPlayer = new Player(id, this.TOTAL_DICE, this.TOTAL_ROUNDS);
@@ -84,13 +58,6 @@ public class GameMaster {
 		return newPlayer;
 	}
 	
-	
-	/**
-	 * Regular Yatzy combinations.
-	 * 
-	 * @author Lars
-	 *
-	 */
 	public enum Combination {
 		
 		ONES(1, "Ones"),
@@ -131,12 +98,6 @@ public class GameMaster {
 		}
 	}
 	
-	/**
-	 * If D6 gets too boring...
-	 * 
-	 * @author Lars
-	 *
-	 */
 	public enum DiceType  {
 		
 		D6(6),
@@ -163,5 +124,4 @@ public class GameMaster {
 			return maxMap.get(dice);	
 		}
 	}
-	
 }

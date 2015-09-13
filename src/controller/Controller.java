@@ -29,28 +29,22 @@ public class Controller implements Runnable {
 		this.frame = frame;
 	}
 	
-	/**
-	 * Thread start.
-	 */
 	public void run() {
 		
 		this.frame.initialize();
 		this.queryPlayers();
 		
 		/* Setup players. */
-		for (Player p : this.master.getPlayers()) {
-			this.frame.addPlayer(p.getID(), this.master.getNrOfRounds());
+		for (Player p : master.getPlayers()) {
+			frame.addPlayer(p.getID(), master.getNrOfRounds());
 		}
 		
 		this.frame.update();
 	}
 	
-	/**
-	 * Retrieves the number of players given by the user. Keeps asking if answer not OK.
-	 */
 	private void queryPlayers() {
 		
-		String players = this.frame.queryPlayers();
+		String players = frame.askForPlayersNumber();
 		
 		try {
 			Integer playerNr = new Integer(players);
@@ -58,7 +52,7 @@ public class Controller implements Runnable {
 				this.queryPlayers();
 			}
 			else {
-				this.master.setPlayers(playerNr);
+				master.setPlayers(playerNr);
 			}
 			
 		} catch(IllegalArgumentException e) {
@@ -66,44 +60,23 @@ public class Controller implements Runnable {
 		}	
 	}
 	
-	/**
-	 * Stores the results of the dice that the player has selected.
-	 * 
-	 * @param playerID	player.
-	 * @param result	dice result.
-	 */
 	public void saveDice(int playerID, int result) {
-		if (playerID < 0 || result < 0)
-			throw new IllegalArgumentException();
-		
-		this.master.getPlayerForID(playerID).saveDice(result);
+		master.getPlayerForID(playerID).saveDice(result);
 	}
 	
-	/**
-	 * Gets the rounds from the GameMaster.
-	 * 
-	 * @return the rounds from the GameMaster.
-	 */
 	public int getNrOfRounds() {
-		return this.master.getNrOfRounds();
+		return master.getNrOfRounds();
 	}
 	
-	/**
-	 * Call from "Roll Dice"-button in the UI.
-	 * 
-	 * @param playerID	the <code>Player</code>, must be 0 or larger.
-	 */
 	public void rollDice(int playerID) {
-		if (playerID < 0)
-			throw new IllegalArgumentException();
 		
-		Player p = this.master.getPlayerForID(playerID);
+		Player p = master.getPlayerForID(playerID);
 		if (!p.canRoll())
 			return;
 		
 		int currentRound = p.getRound();
 		if (currentRound > 0)
-			this.frame.roundDone(playerID, currentRound);
+			frame.roundDone(playerID, currentRound);
 		
 		p.incRound();
 		
@@ -114,54 +87,38 @@ public class Controller implements Runnable {
 		
 		p.setDiceInHand(diceRolled);
 		
-		this.frame.showDiceResults(playerID, p.getDiceInHand(), p.getSavedDice(), p.getRound(), p.canRoll());
+		frame.showDiceResults(playerID, p.getDiceInHand(), p.getSavedDice(), p.getRound(), p.canRoll());
 		
 	}
 	
-	/**
-	 * 
-	 * @return if this game is over or not.
-	 */
 	private boolean endGame() {
 		
 		boolean endGame = true;
-		for (Player p : this.master.getPlayers())
+		for (Player p : master.getPlayers())
 			endGame = endGame && p.isDonePlaying();
 		
 		return endGame;
 	}
 	
-	/**
-	 * 
-	 * @return the <code>Player</code> with the highest score.
-	 */
 	private Player whoLeads() {
 		
-		Player leader = this.master.getPlayerForID(1);
-		for (Player p : this.master.getPlayers())
+		Player leader = master.getPlayerForID(1);
+		for (Player p : master.getPlayers())
 			leader = p.getScore() > leader.getScore() ? p : leader;
 			
 		return leader;
 	}
 	
-	/**
-	 * The player uses a combination, but it is only spent if it can grant higher score.
-	 * 
-	 * @param playerID	the player. Must be 0 or higher.
-	 * @param comb		the <code>Combination</code> the player wishes to spend. Can not be <code>null</code>.
-	 */
 	public void useCombination(int playerID, Combination comb) {
-		if (playerID < 0 || comb == null)
-			throw new IllegalArgumentException();
 		
-		Player p = this.master.getPlayerForID(playerID);
+		Player p = master.getPlayerForID(playerID);
 		
 		/* Quite ugly, if no rolls have been made, no score can be claimed. TODO disable combination button. */
 		if (p.getDiceInHand() == null)
 			return;
 
-		if (this.calculateScore(p, comb) > 0) {
-			this.frame.showScore(playerID, p.getScore());
+		if (calculateScore(p, comb) > 0) {
+			frame.showScore(playerID, p.getScore());
 		}
 	}
 	
@@ -176,9 +133,7 @@ public class Controller implements Runnable {
 	 * @return	-1 if combination isn't spent. New score otherwise.
 	 */
 	private int calculateScore(Player p, Combination comb) {
-		if (comb == null || comb == null)
-			throw new IllegalArgumentException();
-		
+				
 		int score = p.getScore();
 		
 		/* Get all dice of the player in one place (saved and in hand). */
@@ -240,44 +195,25 @@ public class Controller implements Runnable {
 		return score;
 	}
 
-	/**
-	 * Retrieves the available <code>Combination</code>s for a specific <code>Player</code>.
-	 * 
-	 * @param playerID	the player. Must be 0 or larger.
-	 * 
-	 * @return	
-	 */
-	public Set<Combination> getCombinations(int playerID) {
-		if (playerID < 0)
-			throw new IllegalArgumentException();
-		
-		return this.master.getPlayerForID(playerID).getCombinationsLeft();
+	public Set<Combination> getAvailableCombinations(int playerID) {
+			
+		return master.getPlayerForID(playerID).getCombinationsLeft();
 	}
 
-	/**
-	 * The player is done. Disables last round of dice buttons.
-	 * 
-	 * @param playerID	the player. Must be greater than 0.
-	 */
 	public void playerDone(int playerID) {
-		if (playerID < 0)
-			throw new IllegalArgumentException();
 		
-		Player p = this.master.getPlayerForID(playerID);
+		Player p = master.getPlayerForID(playerID);
 		p.setDonePlaying();
 		
 		int round = p.getRound();
 		if(round > 0) 
-			this.frame.roundDone(playerID, p.getRound());
+			frame.roundDone(playerID, p.getRound());
 	}
 
-	/**
-	 * Is the game over? If so, end it.
-	 */
 	public void checkEndGame() {
 		
 		Player leader = this.whoLeads();
-		if (this.endGame())
-			this.frame.endGame(leader.getID(), leader.getScore());
+		if (endGame())
+			frame.endGame(leader.getID(), leader.getScore());
 	}
 }

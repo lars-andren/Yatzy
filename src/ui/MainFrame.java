@@ -58,35 +58,29 @@ public class MainFrame extends JFrame {
 	
 	public void update() {
 	
-		this.resize(this.mainSize);
-		this.setVisible(true);
-		this.pack();
+		resize(this.mainSize);
+		setVisible(true);
+		pack();
 		
 	}
 	
 	public void initialize() {
 
-		this.setTitle(TextLabels.GAME_TITLE);
-		this.setDefaultCloseOperation(EXIT_ON_CLOSE);
-		this.setLayout(new FlowLayout());
+		setTitle(TextLabels.GAME_TITLE);
+		setDefaultCloseOperation(EXIT_ON_CLOSE);
+		setLayout(new FlowLayout());
 		
-		this.mainSize = new Dimension(200,300);
-		this.mainPanel = new PanelContainer(new JPanel(), 2, 1);
+		mainSize = new Dimension(200,300);
+		mainPanel = new PanelContainer(new JPanel(), 2, 1);
 		JPanel mpRef = this.mainPanel.getPanel();
 		JLabel winnerLabel = new JLabel(TextLabels.WINNER);
-		this.mainPanel.getMatrix()[1][0].add(winnerLabel);
+		mainPanel.getMatrix()[1][0].add(winnerLabel);
 		
-		this.add(mpRef);
+		add(mpRef);
 		
-		this.playerPanelMap = new HashMap<Integer, PanelContainer>();
+		playerPanelMap = new HashMap<Integer, PanelContainer>();
 	}
 	
-	/**
-	 * Adds a player's panel to the MainFrame, stores a reference from Player to this panel.
-	 * 
-	 * @param playerID	the player. Must be 0 or larger.
-	 * @param rounds	the number of rounds to play. Must be 1 or larger.
-	 */
 	public void addPlayer(int playerID, int rounds) {
 		if (playerID < 0 || rounds < 1)
 			throw new IllegalArgumentException();
@@ -95,18 +89,12 @@ public class MainFrame extends JFrame {
 		PlayerPanelConstructor ppc = new PlayerPanelConstructor(playerID, rounds, this);
 		PanelContainer playerPanel = ppc.getPC();
 		
-		this.mainPanel.getMatrix()[0][0].add(playerPanel.getPanel());
+		mainPanel.getMatrix()[0][0].add(playerPanel.getPanel());
+		playerPanelMap.put(playerID, playerPanel);
 		
-		this.playerPanelMap.put(playerID, playerPanel);
-		
-		this.update();
+		update();
 	}
 	
-	/**
-	 * For roll dice button.
-	 * 
-	 * @param playerID	player rolling dice. Must be 0 or larger.
-	 */
 	protected void rollDice(int playerID) {
 		if (playerID < 0)
 			throw new IllegalArgumentException();
@@ -114,16 +102,11 @@ public class MainFrame extends JFrame {
 		this.c.rollDice(playerID);
 	}
 	
-	/**
-	 * Shows the point claiming combinations left to a player.
-	 * 
-	 * @param playerID the player.
-	 */
-	protected void showCombinations(int playerID) {
+	protected void showAvailableCombinations(int playerID) {
 
 		JDialog popUp = new JDialog();
 		JPanel popUpPanel = new JPanel();
-		Set<Combination> combinationsLeft = this.c.getCombinations(playerID);
+		Set<Combination> combinationsLeft = this.c.getAvailableCombinations(playerID);
 		
 		/* Create a button for each Combination left for the player. */
 		for (Combination comb : combinationsLeft) {
@@ -143,22 +126,11 @@ public class MainFrame extends JFrame {
 		popUp.pack();
 	}
 
-	/**
-	 * Ask for number of players.
-	 * 
-	 * @return	whatever the user gave as input.
-	 */
-	public String queryPlayers() {
+	public String askForPlayersNumber() {
 		return JOptionPane.showInputDialog(this, TextLabels.PLAYER_NUMBER);
 		
 	}
 
-	/**
-	 * Updates the score of a player.
-	 * 
-	 * @param playerID	the player. Must be 0 or larger.
-	 * @param score		the new score of the player. Must be larger than 0.
-	 */
 	public void showScore(int playerID, int score) {
 		if (playerID < 0 || score < 0)
 			throw new IllegalArgumentException();
@@ -231,11 +203,6 @@ public class MainFrame extends JFrame {
 		this.update();
 	}
 
-	/**
-	 * 
-	 * @param playerID
-	 * @param round
-	 */
 	public void roundDone(int playerID, int round) {
 		
 		for (Component panelComp : this.playerPanelMap.get(playerID).getMatrix()[round][0].getComponents()) {
@@ -246,28 +213,17 @@ public class MainFrame extends JFrame {
 		}
 	}
 	
-	/**
-	 * No more rolls allowed, the game is over.
-	 * 
-	 * @param playerID	the player who won. Must be greater than 0.
-	 * @param score	the winning score. Must be less than or greater than 0.
-	 */
 	public void endGame(int playerID, int score) {
 		if (playerID < 1 || score < 0)
 			throw new IllegalArgumentException();
 		
 		JLabel winnerLabel = new JLabel("Player " + playerID + ", with a total score of " + score + "!");
-		this.mainPanel.getMatrix()[1][0].add(winnerLabel);
-		this.update();
+		mainPanel.getMatrix()[1][0].add(winnerLabel);
+		update();
 	}
 
-	/**
-	 * Disables dice & combinations button.
-	 * Passes on the "Im done" message from the player to the <code>Controller</code>.
-	 * 
-	 * @param playerID	the player.
-	 */
-	public void playerDone(int playerID) {
+
+	public void playerIsDone(int playerID) {
 		if (playerID < 1)
 			throw new IllegalArgumentException();
 		
@@ -282,10 +238,7 @@ public class MainFrame extends JFrame {
 		
 	}
 
-	/**
-	 * Is the game over?
-	 */
 	public void checkEndGame() {
-		this.c.checkEndGame();
+		c.checkEndGame();
 	}
 }
