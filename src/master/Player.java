@@ -181,27 +181,6 @@ public class Player {
 		this.savedDice.clear();
 		this.diceLeft = 0;
 	}
-	
-	/**
-	 * TODO future.
-	 * 
-	 * @return
-	 */
-	public String getName() {
-		return name;
-	}
-
-	/**
-	 * TODO future.
-	 * 
-	 * @param name
-	 */
-	public void setName(String name) {
-		if (name == null)
-			throw new IllegalArgumentException();
-		
-		this.name = name;
-	}
 
 	/**
 	 * 

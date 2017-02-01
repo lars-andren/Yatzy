@@ -73,13 +73,9 @@ public class Controller implements Runnable {
 		Player p = master.getPlayerForID(playerID);
 		if (!p.canRoll())
 			return;
-		
-		int currentRound = p.getRound();
-		if (currentRound > 0)
-			frame.roundDone(playerID, currentRound);
-		
-		p.incRound();
-		
+
+        checkAndIncRound(p);
+
 		int[] diceRolled = new int[p.getDiceLeft()];
 		for (int i=0; i < diceRolled.length; i++) {
 			diceRolled[i] = (int)(DiceType.getMax(this.master.getDiceType()) * Math.random()) + 1;
@@ -90,7 +86,21 @@ public class Controller implements Runnable {
 		frame.showDiceResults(playerID, p.getDiceInHand(), p.getSavedDice(), p.getRound(), p.canRoll());
 		
 	}
-	
+
+    private void checkAndIncRound(Player p) {
+
+        int currentRound = p.getRound();
+        finalizeRound(currentRound, p.getID());
+
+        p.incRound();
+    }
+
+    private void finalizeRound(int currentRound, int playerID) {
+
+        if (currentRound > 0)
+            frame.roundDone(playerID, currentRound);
+    }
+
 	private boolean endGame() {
 		
 		boolean endGame = true;
@@ -143,7 +153,7 @@ public class Controller implements Runnable {
 			totalDice.add(inHand);
 		
 		if (comb.equals(Combination.HOUSE)) {
-			score += this.calculateHouseScore(p, totalDice);
+			score += this.calculateHouseScore(totalDice);
 		}
 		else {	
 			for (int dice : totalDice) {
@@ -151,47 +161,66 @@ public class Controller implements Runnable {
 					score += dice;
 			}
 		}
-		
+
+		return setScoreandUseCombination(score, comb, p);
+	}
+
+	private int setScoreandUseCombination(int score, Combination comb, Player p) {
+
 		if (score == p.getScore()) {
 			return 0;
 		}
 		else {
 			p.setScore(score);
 			p.useCombination(comb);
-			
+
 			return score;
 		}
 	}
-	
+
 	/**
 	 * Trickier than simple combination.
-	 * 
-	 * @param p	the <code>Player</code> that is trying to claim a HOUSE.
+	 *
 	 * @param totalDice	the sum of the current dice in hand and the saved dice.
 	 * 
 	 * @return	the <code>Player</code>'s previous score added to that of the HOUSE combination.
 	 */
-	private int calculateHouseScore(Player p, List<Integer> totalDice) {
+	private int calculateHouseScore(List<Integer> totalDice) {
 		
 		int score = 0;
+
 		HashSet<Integer> setOfDice = new HashSet<Integer>(totalDice);
-		
-		boolean validHouse = false;
 		int diceTypes = setOfDice.size();
 		
-		/* Only two types of dice in a house, and one of these types needs to be 2 (2nd type is 3) or 3 (2nd type is 2). */
+		boolean validHouse = checkValidHouse(diceTypes, totalDice);
+
+		if (validHouse) {
+			return computeHouseScore(setOfDice, totalDice);
+		}
+		
+		return score;
+	}
+
+	private boolean checkValidHouse(int diceTypes, List<Integer> totalDice) {
+
+		boolean validHouse = false;
+
 		if (diceTypes == 2) {
 			int pairOrTriss = Collections.frequency(totalDice, totalDice.get(0));
-				validHouse = !validHouse && (pairOrTriss == 2 || pairOrTriss == 3);
+			validHouse = !validHouse && (pairOrTriss == 2 || pairOrTriss == 3);
 		}
-		
-		/* Yes, valid house, calculate score. */
-		if (validHouse) {
-			for (int type : setOfDice) {
-				score += (Collections.frequency(totalDice, type) * type); 
-			}
+
+		return validHouse;
+	}
+
+	private int computeHouseScore(HashSet<Integer> setOfDice, List<Integer> totalDice) {
+
+		int score = 0;
+
+		for (int type : setOfDice) {
+			score += (Collections.frequency(totalDice, type) * type);
 		}
-		
+
 		return score;
 	}
 

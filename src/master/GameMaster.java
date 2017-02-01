@@ -12,7 +12,7 @@ import java.util.HashMap;
 public class GameMaster {
 
 	private ArrayList<Player> players = new ArrayList<Player>();
-	private HashMap<Integer, Player> playerMap = new HashMap<Integer, Player>();
+	private HashMap<Integer, Player> playerMap = new HashMap<>();
 	
 	private DiceType diceType;
 	
@@ -71,13 +71,13 @@ public class GameMaster {
 		private int value;
 		private String name;
 		
-		private Combination(final int value, final String name) {
+		Combination(final int value, final String name) {
 			this.value = value;
 			this.name = name;
 		}
 		
-		private static HashMap<Combination, Integer> valueMap = new HashMap<Combination, Integer>();
-		private static HashMap<Combination, String> nameMap = new HashMap<Combination, String>();
+		private static HashMap<Combination, Integer> valueMap = new HashMap<>();
+		private static HashMap<Combination, String> nameMap = new HashMap<>();
 		
 		static {
 			for (Combination comb : Combination.values()) {
@@ -107,11 +107,11 @@ public class GameMaster {
 		
 		private int max;
 		
-		private DiceType(final int max) {
+		DiceType(final int max) {
 			this.max = max;
 		}
 		
-		private static HashMap<DiceType, Integer> maxMap = new HashMap<DiceType, Integer>();
+		private static HashMap<DiceType, Integer> maxMap = new HashMap<>();
 		
 		static {
 			for (DiceType dice : DiceType.values()) {
