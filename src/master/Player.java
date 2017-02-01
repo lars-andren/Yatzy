@@ -82,8 +82,6 @@ public class Player {
 	 * @param comb	the <code>Combination</code> to spend. Can not be <code>null</code>.
 	 */
 	public void useCombination(Combination comb) {
-		if (comb == null)
-			throw new IllegalArgumentException();
 		
 		this.combinations.remove(comb);
 	}
@@ -145,11 +143,8 @@ public class Player {
 	 * Save values of rolled dice, decrement dice left.
 	 * 
 	 * @param result	result of the dice to save.
-	 * @throws IllegalStateException	if all dice already saved.
 	 */
 	public void saveDice(int result) throws IllegalStateException {
-		if (diceLeft < 0)
-			throw new IllegalStateException();
 		
 		this.savedDice.add(result);
 		this.diceLeft--;
