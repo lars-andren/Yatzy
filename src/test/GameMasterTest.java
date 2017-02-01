@@ -10,7 +10,7 @@ import master.GameMaster;
 import master.GameMaster.DiceType;
 import ui.MainFrame;
 
-public class TestGameMaster {
+public class GameMasterTest {
 
 	GameMaster master;
 	Controller c;

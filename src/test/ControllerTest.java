@@ -12,7 +12,7 @@ import master.GameMaster.DiceType;
 import master.Player;
 import ui.MainFrame;
 
-public class TestController {
+public class ControllerTest {
 
 	GameMaster master;
 	MainFrame view;
