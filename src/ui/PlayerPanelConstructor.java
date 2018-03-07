@@ -26,19 +26,9 @@ public class PlayerPanelConstructor implements PanelConstructor {
 	
 	private int playerID;
 	private int rounds;
-	
-	/**
-	 * Main window.
-	 */
+
 	private MainFrame main;
-	
-	/**
-	 * Single constructor.
-	 * 
-	 * @param playerID	the player.	Must be non-negative.
-	 * @param rounds	how many rounds to play. Must be greater than 0.
-	 * @param main		main window. Can not be <code>null</code>.
-	 */
+
 	public PlayerPanelConstructor(int playerID, int rounds, MainFrame main) {
 		if (playerID < 0 || rounds < 1 || main == null) 
 			throw new IllegalArgumentException();
@@ -48,34 +38,24 @@ public class PlayerPanelConstructor implements PanelConstructor {
 		this.main = main;
 		
 	}
-	
-	/**
-	 * Main method of private constructing methods.
-	 * 
-	 * @return the complete panel with references.
-	 */
+
 	private PanelContainer constructPlayerPanel() {
 		
 		int totalRows = this.rounds + nrOfPlayerPanelSubPanels;
 		PanelContainer playerPanel = new PanelContainer(new JPanel(), totalRows, 1);
 		
-		JPanel panel = playerPanel.getPanel();
+		JPanel panel = playerPanel.getJPanel();
 		panel.setBorder(BorderFactory.createLineBorder(Color.BLUE));
 //		panel.setLayout(new GridLayout(totalRows, 1));
 		
-		playerPanel.getMatrix()[0][0].add(this.constructPlayerIDPanel());
-		playerPanel.getMatrix()[totalRows-3][0].add(this.constructPlayerScorePanel());
-		playerPanel.getMatrix()[totalRows-5][0].add(this.constructSavedDicePanel());
-		playerPanel.getMatrix()[totalRows-1][0].add(this.constructDonePanel());
+		playerPanel.getPanelMatrix()[0][0].add(this.constructPlayerIDPanel());
+		playerPanel.getPanelMatrix()[totalRows-3][0].add(this.constructPlayerScorePanel());
+		playerPanel.getPanelMatrix()[totalRows-5][0].add(this.constructSavedDicePanel());
+		playerPanel.getPanelMatrix()[totalRows-1][0].add(this.constructDonePanel());
 		
 		return playerPanel;
 	}
-	
-	/**
-	 * Helper method to do saved dice.
-	 * 
-	 * @return	the panel above the saved dice display.
-	 */
+
 	private JPanel constructSavedDicePanel() {
 		
 		JPanel savedDicePanel = new JPanel();
@@ -85,12 +65,7 @@ public class PlayerPanelConstructor implements PanelConstructor {
 		
 		return savedDicePanel;
 	}
-	
-	/**
-	 * Helper method to do score panel.
-	 * 
-	 * @return	the panel above the score number.
-	 */
+
 	private JPanel constructPlayerScorePanel() {
 		
 		JPanel playerScorePanel = new JPanel();
@@ -100,12 +75,7 @@ public class PlayerPanelConstructor implements PanelConstructor {
 		
 		return playerScorePanel;
 	}
-	
-	/**
-	 * Done button panel.
-	 * 
-	 * @return a panel with the "done"-button.
-	 */
+
 	private JPanel constructDonePanel() {
 		
 		JPanel donePanel = new JPanel();
@@ -122,12 +92,7 @@ public class PlayerPanelConstructor implements PanelConstructor {
 		
 		return donePanel;
 	}
-	
-	/**
-	 * The player ID and two buttons.
-	 * 
-	 * @return	the Panel with player ID and two buttons.
-	 */
+
 	private JPanel constructPlayerIDPanel() {
 		
 		JPanel playerIDPanel = new JPanel();
@@ -135,36 +100,40 @@ public class PlayerPanelConstructor implements PanelConstructor {
 		
 		JLabel label = new JLabel(TextLabels.NAME_SUBSTITUTE + " " + this.playerID);
 		playerIDPanel.add(label);
-		
-		/* Button for rolling dice. */
-		JButton rollButton = new JButton(TextLabels.ROLL_DICE);
-		rollButton.addActionListener(new ActionListener() {
-	         public void actionPerformed(ActionEvent e) {
-	            PlayerPanelConstructor.this.main.rollDice(PlayerPanelConstructor.this.playerID);
-	         }          
-	      });
-		rollButton.setEnabled(true);
-		
-		/* Button for spending a combination. */
-		JButton combButton = new JButton(TextLabels.USE_COMBINATION);
-		combButton.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent e) {
-				PlayerPanelConstructor.this.main.showAvailableCombinations(PlayerPanelConstructor.this.playerID);
-			}
-		});
-		combButton.setEnabled(true);
-		
+
+		JButton rollButton = createDiceRollButton();
+		JButton combinationButton = createCombinationButton();
+
 		playerIDPanel.add(rollButton);
-		playerIDPanel.add(combButton);
+		playerIDPanel.add(combinationButton);
 		
 		return playerIDPanel;
 	}
 
-	/**
-	 * Constructs and returns the panel, along with references.
-	 */
+	private JButton createDiceRollButton() {
+		JButton rollButton = new JButton(TextLabels.ROLL_DICE);
+		rollButton.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				PlayerPanelConstructor.this.main.rollDice(PlayerPanelConstructor.this.playerID);
+			}
+		});
+		rollButton.setEnabled(true);
+		return rollButton;
+	}
+
+	private JButton createCombinationButton() {
+		JButton combinationButton = new JButton(TextLabels.USE_COMBINATION);
+		combinationButton.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				PlayerPanelConstructor.this.main.showAvailableCombinations(PlayerPanelConstructor.this.playerID);
+			}
+		});
+		combinationButton.setEnabled(true);
+		return combinationButton;
+	}
+
 	@Override
-	public PanelContainer getPC() {
+	public PanelContainer getPanelContainer() {
 		
 		return this.constructPlayerPanel();
 	}

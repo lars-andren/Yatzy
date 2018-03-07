@@ -8,5 +8,5 @@ package ui;
  */
 interface PanelConstructor {
 	
-	public PanelContainer getPC();
+	PanelContainer getPanelContainer();
 }

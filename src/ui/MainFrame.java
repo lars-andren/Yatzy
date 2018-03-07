@@ -72,9 +72,9 @@ public class MainFrame extends JFrame {
 		
 		mainSize = new Dimension(200,300);
 		mainPanel = new PanelContainer(new JPanel(), 2, 1);
-		JPanel mpRef = this.mainPanel.getPanel();
+		JPanel mpRef = this.mainPanel.getJPanel();
 		JLabel winnerLabel = new JLabel(TextLabels.WINNER);
-		mainPanel.getMatrix()[1][0].add(winnerLabel);
+		mainPanel.getPanelMatrix()[1][0].add(winnerLabel);
 		
 		add(mpRef);
 		
@@ -87,9 +87,9 @@ public class MainFrame extends JFrame {
 		
 		/* Create a panel, add to the mainpanel*/
 		PlayerPanelConstructor ppc = new PlayerPanelConstructor(playerID, rounds, this);
-		PanelContainer playerPanel = ppc.getPC();
+		PanelContainer playerPanel = ppc.getPanelContainer();
 		
-		mainPanel.getMatrix()[0][0].add(playerPanel.getPanel());
+		mainPanel.getPanelMatrix()[0][0].add(playerPanel.getJPanel());
 		playerPanelMap.put(playerID, playerPanel);
 		
 		update();
@@ -136,7 +136,7 @@ public class MainFrame extends JFrame {
 			throw new IllegalArgumentException();
 		
 		PanelContainer panelContainer = this.playerPanelMap.get(playerID);
-		JPanel[][] panelMatrix = panelContainer.getMatrix();
+		JPanel[][] panelMatrix = panelContainer.getPanelMatrix();
 	
 		/* Cleanup old score. */
 		JPanel scorePanel = panelMatrix[this.c.getNrOfRounds()+4][0];
@@ -164,9 +164,8 @@ public class MainFrame extends JFrame {
 			throw new IllegalArgumentException();
 		
 		PanelContainer panelContainer = this.playerPanelMap.get(playerID);
-		JPanel[][] panelMatrix = panelContainer.getMatrix();
-		
-		/* Newly rolled dice. */
+		JPanel[][] panelMatrix = panelContainer.getPanelMatrix();
+
 		JPanel newResult = new JPanel();
 		
 		for (int dice : diceInHand) {
@@ -174,14 +173,9 @@ public class MainFrame extends JFrame {
 			/* Auto-save results if last round reached. */
 			JButton rolledDice = new JButton("" + dice);
 			if(canRoll) {
-				rolledDice.addActionListener(new ActionListener() {
-					public void actionPerformed(ActionEvent e) {
-						MainFrame.this.c.saveDice(playerID, dice);
-						rolledDice.setEnabled(false);
-					}          
-					});
+				drawRolledDice(rolledDice, playerID, dice);
 			} else {
-				this.c.saveDice(playerID, dice);
+				autoSaveResults(playerID, dice);
 			}
 			
 			newResult.add(rolledDice);
@@ -203,9 +197,22 @@ public class MainFrame extends JFrame {
 		this.update();
 	}
 
+	private void autoSaveResults(int playerID, int dice) {
+		this.c.saveDice(playerID, dice);
+	}
+
+	private void drawRolledDice(JButton rolledDice, int playerID, int dice) {
+		rolledDice.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				MainFrame.this.c.saveDice(playerID, dice);
+				rolledDice.setEnabled(false);
+			}
+		});
+	}
+
 	public void roundDone(int playerID, int round) {
 		
-		for (Component panelComp : this.playerPanelMap.get(playerID).getMatrix()[round][0].getComponents()) {
+		for (Component panelComp : this.playerPanelMap.get(playerID).getPanelMatrix()[round][0].getComponents()) {
 				JPanel panel = (JPanel) panelComp;
 				for (Component button : panel.getComponents()) {
 					button.setEnabled(false);
@@ -218,16 +225,15 @@ public class MainFrame extends JFrame {
 			throw new IllegalArgumentException();
 		
 		JLabel winnerLabel = new JLabel("Player " + playerID + ", with a total score of " + score + "!");
-		mainPanel.getMatrix()[1][0].add(winnerLabel);
+		mainPanel.getPanelMatrix()[1][0].add(winnerLabel);
 		update();
 	}
-
 
 	public void playerIsDone(int playerID) {
 		if (playerID < 1)
 			throw new IllegalArgumentException();
 		
-		for (Component panelComp : this.playerPanelMap.get(playerID).getMatrix()[0][0].getComponents()) {
+		for (Component panelComp : this.playerPanelMap.get(playerID).getPanelMatrix()[0][0].getComponents()) {
 			JPanel panel = (JPanel) panelComp;
 			for (Component button : panel.getComponents()) {
 				button.setEnabled(false);

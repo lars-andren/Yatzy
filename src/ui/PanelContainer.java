@@ -14,10 +14,10 @@ public class PanelContainer {
 
 	private JPanel panel;
 	private JPanel[][] panelMatrix;
-	
+
 	/**
 	 * PanelContainer creates JPanel grid that is mapped to the panel.
-	 * 
+	 *
 	 * @param panel	the actual JPanel. Can not be <code>null</code>.
 	 * @param rows	the number of rows in the panel. Must be greater than 0.
 	 * @param columns	the number of columns in the panel. Must be greater than 0.
@@ -38,22 +38,12 @@ public class PanelContainer {
 			   }
 		}
 	}
-	
-	/**
-	 * Retrieves the panels reference grid. Only for the view.
-	 * 
-	 * @return the reference-panels.
-	 */
-	JPanel[][] getMatrix() {
+
+	JPanel[][] getPanelMatrix() {
 		return this.panelMatrix;
 	}
-	
-	/**
-	 * Retrieves the actual JPanel. Only for the view.
-	 * 
-	 * @return the actual overview JPanel.
-	 */
-	JPanel getPanel() {
+
+	JPanel getJPanel() {
 		return this.panel;
 	}
 }

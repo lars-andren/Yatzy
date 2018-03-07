@@ -71,7 +71,7 @@ public class Controller implements Runnable {
 	public void rollDice(int playerID) {
 		
 		Player p = master.getPlayerForID(playerID);
-		if (!p.canRoll())
+		if (!p.canPlayerRoll())
 			return;
 
         checkAndIncRound(p);
@@ -83,7 +83,7 @@ public class Controller implements Runnable {
 		
 		p.setDiceInHand(diceRolled);
 		
-		frame.showDiceResults(playerID, p.getDiceInHand(), p.getSavedDice(), p.getRound(), p.canRoll());
+		frame.showDiceResults(playerID, p.getDiceInHand(), p.getSavedDice(), p.getRound(), p.canPlayerRoll());
 		
 	}
 
@@ -92,7 +92,7 @@ public class Controller implements Runnable {
         int currentRound = p.getRound();
         finalizeRound(currentRound, p.getID());
 
-        p.incRound();
+        p.incrementRound();
     }
 
     private void finalizeRound(int currentRound, int playerID) {
@@ -131,17 +131,7 @@ public class Controller implements Runnable {
 			frame.showScore(playerID, p.getScore());
 		}
 	}
-	
-	
-	/**
-	 * Calculates the score given by a specific combination. However, if score hasn't incremented, the combination is not spent.
-	 * Specific to HOUSE, but could be considered OK for the other combinations as well.
-	 * 
-	 * @param p		the <code>Player</code> who is trying to raise his/her score. Can not be <code>null</code>.
-	 * @param comb	the <code>Combination</code> spent (if possible to spend). Can not be <code>null</code>.
-	 * 
-	 * @return	-1 if combination isn't spent. New score otherwise.
-	 */
+
 	private int calculateScore(Player p, Combination comb) {
 				
 		int score = p.getScore();
@@ -178,13 +168,6 @@ public class Controller implements Runnable {
 		}
 	}
 
-	/**
-	 * Trickier than simple combination.
-	 *
-	 * @param totalDice	the sum of the current dice in hand and the saved dice.
-	 * 
-	 * @return	the <code>Player</code>'s previous score added to that of the HOUSE combination.
-	 */
 	private int calculateHouseScore(List<Integer> totalDice) {
 		
 		int score = 0;
